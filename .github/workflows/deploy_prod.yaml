@@ -7,7 +7,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+  dryRun:
+    runs-on:
+      labels: ubuntu-latest
+    steps:
+      - run: |
+          echo 'calculating what is gonna happen'
   deploy:
+    needs: dryRun
     runs-on:
       labels: ubuntu-latest
     environment: production
