@@ -20,7 +20,7 @@ jobs:
         id: dryRun
         shell: bash
         run: |
-          echo "body=<<EOF" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$(cat dryRun.md)" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
