@@ -25,6 +25,12 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Waiting for approval
         uses: trstringer/manual-approval@v1
         timeout-minutes: 20
@@ -32,6 +38,8 @@ jobs:
           secret: ${{ github.TOKEN }}
           issue-title: "Deploying to production"
           issue-body: ${{steps.dryRun.outputs.body}}
+          approvers: prod_approvers
+          minimum-approvals: 1
       - name: Deploying
         run: echo 'deploying to production'
       - name: Posting deployment summary
