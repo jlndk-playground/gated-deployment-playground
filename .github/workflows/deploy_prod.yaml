@@ -1,0 +1,16 @@
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - master
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  deploy:
+    runs-on:
+      labels: ubuntu-latest
+    environment: production
+    steps:
+      - run: |
+          echo 'deploying to production'
