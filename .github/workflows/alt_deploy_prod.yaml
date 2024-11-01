@@ -1,0 +1,39 @@
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - master
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  issues: write
+
+jobs:
+  dryRun:
+    runs-on:
+      labels: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+  deploy:
+    runs-on:
+      labels: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Calculating changes
+        id: dryRun
+        run: |
+          echo "body=$(cat dryRun.md)" >> "$GITHUB_OUTPUT"
+          cat dryRun.md >> $GITHUB_STEP_SUMMARY
+      - name: Waiting for approval
+        uses: trstringer/manual-approval@v1
+        timeout-minutes: 20
+        with:
+          secret: ${{ github.TOKEN }}
+          issue-title: "Deploying to production"
+          issue-body: ${{steps.dryRun.outputs.body}}
+      - name: Deploying
+        run: echo 'deploying to production'
+      - name: Posting deployment summary
+        run: echo '### Deployment complete! 🚀' >> $GITHUB_STEP_SUMMARY
