@@ -12,7 +12,7 @@ jobs:
       labels: ubuntu-latest
     steps:
       - run: |
-          echo '### Looks good! 🚀' >> $GITHUB_STEP_SUMMARY
+          cat dryRun.md >> $GITHUB_STEP_SUMMARY
 
   deploy:
     needs: dryRun
@@ -22,3 +22,5 @@ jobs:
     steps:
       - run: |
           echo 'deploying to production'
+      - run: |
+          echo '### Deployment complete! 🚀' >> $GITHUB_STEP_SUMMARY
