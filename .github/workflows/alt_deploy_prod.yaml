@@ -10,11 +10,6 @@ permissions:
   issues: write
 
 jobs:
-  dryRun:
-    runs-on:
-      labels: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
   deploy:
     runs-on:
@@ -26,7 +21,7 @@ jobs:
         shell: bash
         run: |
           echo "body=<<EOF" >> $GITHUB_ENV
-          echo $(cat dryRun.md) >> $GITHUB_ENV
+          echo "$(cat dryRun.md)" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
