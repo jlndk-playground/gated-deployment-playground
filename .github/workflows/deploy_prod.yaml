@@ -12,7 +12,8 @@ jobs:
       labels: ubuntu-latest
     steps:
       - run: |
-          echo 'calculating what is gonna happen'
+          echo '### Looks good! 🚀' >> $GITHUB_STEP_SUMMARY
+
   deploy:
     needs: dryRun
     runs-on:
