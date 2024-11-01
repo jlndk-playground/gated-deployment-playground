@@ -11,6 +11,7 @@ jobs:
     runs-on:
       labels: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: |
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
 
@@ -20,6 +21,7 @@ jobs:
       labels: ubuntu-latest
     environment: production
     steps:
+      - uses: actions/checkout@v4
       - run: |
           echo 'deploying to production'
       - run: |
