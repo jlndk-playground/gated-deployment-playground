@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Calculating changes
         id: dryRun
+        shell: bash
         run: |
           echo "body=$(cat dryRun.md)" >> "$GITHUB_OUTPUT"
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
