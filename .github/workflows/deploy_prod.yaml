@@ -23,25 +23,17 @@ jobs:
           AWS_TOKEN=$(jq -r '.inputs.password' $GITHUB_EVENT_PATH)
           echo ::add-mask::$AWS_TOKEN
           echo AWS_TOKEN=$AWS_TOKEN >> $GITHUB_ENV
-      - run: echo "Calculating changes ${{ env.AWS_TOKEN }}"
+      - name: Calculating changes
+        id: dryRun
+        run: |
+          echo "Calculating changes ${{ env.AWS_TOKEN }}"
+          cat dryRun.md >> $GITHUB_STEP_SUMMARY
 
   deploy:
     runs-on:
       labels: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Calculating changes
-        id: dryRun
-        run: |
-          echo "body=$(cat dryRun.md)" >> "$GITHUB_OUTPUT"
-          cat dryRun.md >> $GITHUB_STEP_SUMMARY
-      - name: Waiting for approval
-        uses: trstringer/manual-approval@v1
-        timeout-minutes: 20
-        with:
-          secret: ${{ github.TOKEN }}
-          issue-title: "Deploying to production"
-          issue-body: ${{steps.dryRun.outputs.body}}
       - name: Deploying
         run: echo 'deploying to production'
       - name: Posting deployment summary
