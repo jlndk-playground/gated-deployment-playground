@@ -19,6 +19,7 @@ jobs:
       labels: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: echo "Calculating changes ${{ github.event.inputs.token }}"
 
   deploy:
     runs-on:
@@ -28,7 +29,6 @@ jobs:
       - name: Calculating changes
         id: dryRun
         run: |
-          echo "Calculating changes ${{ github.event.inputs.token }}"
           echo "body=$(cat dryRun.md)" >> "$GITHUB_OUTPUT"
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
       - name: Waiting for approval
