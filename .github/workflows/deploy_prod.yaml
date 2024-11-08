@@ -9,13 +9,10 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
-permissions:
-  issues: write
-
 jobs:
   dryRun:
-    runs-on:
-      labels: ubuntu-latest
+    environment: production
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Mask token
@@ -24,17 +21,17 @@ jobs:
           echo ::add-mask::$AWS_TOKEN
           echo AWS_TOKEN=$AWS_TOKEN >> $GITHUB_ENV
       - name: Calculating changes
-        id: dryRun
         run: |
           echo "Calculating changes ${{ env.AWS_TOKEN }}"
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
 
   deploy:
-    runs-on:
-      labels: ubuntu-latest
+    needs: dryRun
+    environment: production
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Deploying
-        run: echo 'deploying to production'
+      - name: Deploy
+        run: echo "Deploying to production ${{ env.AWS_TOKEN }}"
       - name: Posting deployment summary
         run: echo '### Deployment complete! 🚀' >> $GITHUB_STEP_SUMMARY
