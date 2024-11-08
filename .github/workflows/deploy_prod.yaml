@@ -17,7 +17,7 @@ jobs:
       - name: Mask token
         run: |
           AWS_TOKEN=$(jq -r '.inputs.token' $GITHUB_EVENT_PATH)
-          echo ::add-mask::$AWS_TOKEN
+          # echo ::add-mask::$AWS_TOKEN
           echo AWS_TOKEN=$AWS_TOKEN >> $GITHUB_ENV
       - name: Calculating changes
         run: |
@@ -33,7 +33,7 @@ jobs:
       - name: Mask token
         run: |
           AWS_TOKEN=$(jq -r '.inputs.token' $GITHUB_EVENT_PATH)
-          echo ::add-mask::$AWS_TOKEN
+          # echo ::add-mask::$AWS_TOKEN
           echo AWS_TOKEN=$AWS_TOKEN >> $GITHUB_ENV
       - name: Deploy
         run: echo "Deploying to production ${{ env.AWS_TOKEN }}"
