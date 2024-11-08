@@ -2,11 +2,10 @@ on:
   workflow_dispatch:
     inputs:
       token:
+        type: string
         description: AWS Session Token
         required: true
-  # push:
-  #   branches:
-  #     - master
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
@@ -19,7 +18,12 @@ jobs:
       labels: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Calculating changes ${{ github.event.inputs.token }}"
+      - name: Mask token
+        run: |
+          AWS_TOKEN=$(jq -r '.inputs.password' $GITHUB_EVENT_PATH)
+          echo ::add-mask::$AWS_TOKEN
+          echo AWS_TOKEN=$AWS_TOKEN >> $GITHUB_ENV
+      - run: echo "Calculating changes ${{ env.AWS_TOKEN }}"
 
   deploy:
     runs-on:
