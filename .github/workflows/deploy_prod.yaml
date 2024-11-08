@@ -1,5 +1,9 @@
 on:
   workflow_dispatch:
+    inputs:
+      token:
+        description: AWS Session Token
+        required: true
   # push:
   #   branches:
   #     - master
@@ -24,6 +28,7 @@ jobs:
       - name: Calculating changes
         id: dryRun
         run: |
+          echo "Calculating changes ${{ github.event.inputs.token }}"
           echo "body=$(cat dryRun.md)" >> "$GITHUB_OUTPUT"
           cat dryRun.md >> $GITHUB_STEP_SUMMARY
       - name: Waiting for approval
