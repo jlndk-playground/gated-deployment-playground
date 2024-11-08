@@ -1,8 +1,10 @@
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
+    inputs:
+      token:
+        type: string
+        description: AWS Session Token
+        required: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
@@ -10,16 +12,22 @@ permissions:
   issues: write
 
 jobs:
-
   deploy:
     runs-on:
       labels: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Mask token
+        run: |
+          AWS_TOKEN=$(jq -r '.inputs.token' $GITHUB_EVENT_PATH)
+          echo ::add-mask::$AWS_TOKEN
+          echo AWS_TOKEN=$AWS_TOKEN >> $GITHUB_ENV
       - name: Calculating changes
         id: dryRun
         shell: bash
         run: |
+          echo "Calculating changes ${{ env.AWS_TOKEN }}"
+
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$(cat dryRun.md)" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -34,7 +42,7 @@ jobs:
           issue-body: ${{steps.dryRun.outputs.body}}
           approvers: jlndk
           minimum-approvals: 1
-      - name: Deploying
-        run: echo 'deploying to production'
+      - name: Deploy
+        run: echo "Deploying to production ${{ env.AWS_TOKEN }}"
       - name: Posting deployment summary
         run: echo '### Deployment complete! 🚀' >> $GITHUB_STEP_SUMMARY
