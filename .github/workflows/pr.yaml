@@ -43,8 +43,17 @@ jobs:
           comment_tag: deploy-preview-links
       - name: Wait
         run: sleep 10
+      - name: Fail
+        run: exit 42
       - name: Post deploy preview done comment on PR
         uses: thollander/actions-comment-pull-request@v2
+        if: success()
         with:
           filePath: deploy-preview-done-comment.md
+          comment_tag: deploy-preview-links
+      - name: Post deploy preview failed comment on PR
+        if: failure()
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: deploy-preview-failed-comment.md
           comment_tag: deploy-preview-links
