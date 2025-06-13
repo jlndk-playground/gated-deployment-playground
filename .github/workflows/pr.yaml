@@ -1,0 +1,50 @@
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare preview instructions comments
+        shell: bash
+        run: |
+          COMMENT_BODY=$(cat <<-'END'
+          URL: https://lindenskov.dev/fake-deploy-preview
+          END
+          )
+
+          touch deploy-preview-start-comment.md
+          touch deploy-preview-failed-comment.md
+          touch deploy-preview-done-comment.md
+
+          echo "## :warning: Deploy preview" > deploy-preview-start-comment.md
+          echo "_(The deploy preview is currently being updated)_" >> deploy-preview-start-comment.md
+
+          echo "## :rocket: Deploy preview" > deploy-preview-done-comment.md
+
+          echo "## :boom: Deploy preview failed" > deploy-preview-failed-comment.md
+
+          echo "$COMMENT_BODY" >> deploy-preview-start-comment.md
+          echo "$COMMENT_BODY" >> deploy-preview-done-comment.md
+          echo "$COMMENT_BODY" >> deploy-preview-failed-comment.md
+      - name: Post deploy preview started comment on PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: deploy-preview-start-comment.md
+          comment_tag: deploy-preview-links
+      - name: Wait
+        run: sleep 10
+      - name: Post deploy preview done comment on PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: deploy-preview-done-comment.md
+          comment_tag: deploy-preview-links
